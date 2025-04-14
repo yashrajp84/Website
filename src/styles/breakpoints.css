@@ -1,0 +1,7 @@
+:root {
+  --breakpoint-desktop: 1441px;
+  --breakpoint-macbook: 1440px;
+  --breakpoint-ipad-landscape: 1024px;
+  --breakpoint-ipad-portrait: 768px;
+  --breakpoint-mobile: 480px;
+}

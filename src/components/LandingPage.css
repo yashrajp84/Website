@@ -1,0 +1,6 @@
+.landing-page {
+padding: 20px;
+max-height: 100vh;
+overflow-y: scroll;
+background: linear-gradient(to bottom, #04406C, #C6C2BF);
+}
