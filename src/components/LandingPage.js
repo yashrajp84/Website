@@ -1,13 +1,15 @@
 import React from 'react';
-import HeroSection from './HeroSection';
 import ProjectsSection from './ProjectsSection';
 import './LandingPage.css';
+import HeroSection from './HeroSection';
 
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      <HeroSection />
-      <ProjectsSection />
+      <div data-scroll-section>
+        <HeroSection />
+        <ProjectsSection />
+      </div>
     </div>
   );
 };
