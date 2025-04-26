@@ -1,34 +1,55 @@
 import React, { useEffect } from 'react';
 import './ProjectsSection.css';
 import { Link } from 'react-router-dom';
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const ProjectsSection = () => {
-  const projectImages = [
-    "https://images.unsplash.com/photo-1742995917580-becb015f088d?q=80&w=2240&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://plus.unsplash.com/premium_photo-1674065305877-cb9e914a1993?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEyfHx8ZW58MHx8fHx8",
-    "https://images.unsplash.com/photo-1739911013984-8b3bf696a182?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1741144806007-2a6dd505230a?q=80&w=2800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    "https://images.unsplash.com/photo-1743260671521-603dce521b6a?q=80&w=3088&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ];
+  const [projects, setProjects] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
+      setError(null);
+      const { data, error } = await supabase
+        .from("Project_database")
+        .select("id, name, image, category");
+      if (error) {
+        setError(error.message);
+      } else {
+        setProjects(data || []);
+      }
+      setLoading(false);
+    };
+    fetchProjects();
+  }, []);
+
+  if (loading) return <section className="projects-section">Loading...</section>;
+  if (error) return <section className="projects-section">Error: {error}</section>;
 
   return (
     <section className="projects-section">
       <div className="image-container">
         <img src="https://ynmpuwsryqdnjxhesexm.supabase.co/storage/v1/object/public/brand-assets//Varlicircular1920px.png" alt="Brand Asset" className="rotating-image" />
       </div>
-      {projectImages.map((image, index) => (
-        <div key={index} className="project-card">
-          <img src={image} alt={`Project ${index + 1}`} className="project-image" />
+      {projects.map((project) => (
+        <div key={project.id} className="project-card">
+          <img src={project.image} alt={project.name} className="project-image" />
           <div className="project-actions-wrapper">
-            <div className="project-name-scroll">Project {index + 1}</div>
-            <Link to={`/project/${index + 1}`} className="open-case-study">Open Case Study</Link>
-            <div className="project-tag">Tag {index + 1}</div>
+            <div className="project-name-scroll">{project.name}</div>
+            <Link to={`/project/${project.id}`} className="open-case-study">Open Case Study</Link>
+            <div className="project-tag">{project.category}</div>
           </div>
         </div>
       ))}
       <div className='notes'>
-          Designed and Developed by Yashraj Patil
-          </div>
+        Designed and Developed by Yashraj Patil
+      </div>
     </section>
   );
 };

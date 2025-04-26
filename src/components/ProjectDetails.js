@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
-import "./ProjectsSection.css";
+import "./ProjectDetails.css";
 
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
@@ -16,14 +16,17 @@ const ProjectDetails = ({ projectId }) => {
       setLoading(true);
       setError(null);
       const { data, error } = await supabase
-        .from("projects")
+        .from("Project_database")
         .select("*")
-        .eq("id", projectId)
-        .single();
+        .eq("id", projectId);
       if (error) {
         setError(error.message);
-      } else {
-        setProject(data);
+      } else if (data && data.length === 1) {
+        setProject(data[0]);
+      } else if (data && data.length === 0) {
+        setError("Project not found.");
+      } else if (data && data.length > 1) {
+        setError("Multiple projects found with the same ID. Please check your database.");
       }
       setLoading(false);
     };
@@ -37,26 +40,16 @@ const ProjectDetails = ({ projectId }) => {
   return (
     <div className="project-card">
       <img
-        src={project.image_url}
+        src={project.image}
         alt={project.name}
         className="project-image"
         style={{ borderRadius: "16px" }}
       />
       <div className="project-actions-wrapper">
         <span className="project-name-scroll">{project.name}</span>
-        <span className="project-tag">{project.tag}</span>
+        <span className="project-tag">{project.category}</span>
       </div>
-      <div className="notes">{project.description}</div>
-      {project.case_study_url && (
-        <a
-          href={project.case_study_url}
-          className="open-case-study"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Open Case Study
-        </a>
-      )}
+      <div className="notes">{project.herolmage}</div>
     </div>
   );
 };
